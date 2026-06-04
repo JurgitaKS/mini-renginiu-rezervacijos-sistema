@@ -4,6 +4,7 @@ export const RESERVATION_MESSAGES = {
   noSeats: "Nebėra pakankamai laisvų vietų",
   tooManySeats: "Pasirinkta per daug vietų",
   loginRequired: "Norėdami rezervuoti, prisijungite",
+  eventCancelled: "Renginys atšauktas",
   unknown: "Nepavyko rezervuoti. Bandyk dar kartą.",
   rlsUpdateBlocked:
     "Nepavyko atnaujinti laisvų vietų: trūksta Supabase RLS policy. Paleisk SQL failą supabase/fix-events-update-rls.sql (policy: events_update_authenticated).",

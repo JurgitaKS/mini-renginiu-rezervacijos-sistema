@@ -28,6 +28,7 @@
 | **Kopijavimo funkcija** | Vienos rezervacijos ar visų rezervacijų teksto kopijavimas į iškarpinę. |
 | **Dashboard statistika** | Rezervacijų ir vietų suvestinė, grafikas pagal renginių kategorijas (`/dashboard`). |
 | **Šviesus / tamsus režimas** | Temos perjungimas antraštėje; pasirinkimas išsaugomas naršyklėje. |
+| **Admin** (`/admin`) | Admin el. paštai iš `admin_users` lentelės; renginių sąrašas, pridėjimas ir redagavimas. |
 
 ## Naudotos technologijos
 
@@ -88,8 +89,11 @@ Pavyzdį rasi faile `.env.example`.
 Supabase SQL skriptai yra aplanke `supabase/`. Naujam projektui paleisk **SQL Editor** eilės tvarka:
 
 1. `supabase/schema.sql` — lentelės ir RLS politikos
-2. `supabase/seed.sql` — pavyzdiniai renginiai (pasirenkama)
-3. Jei reikia papildomų pataisymų: `supabase/fix-seats-count-on-cancel.sql`, `supabase/fix-events-rls.sql` ir kt.
+2. `supabase/admin-users.sql` — `admin_users` lentelė ir admin tikrinimo funkcija
+3. `supabase/admin-events-rls.sql` — admin CRUD leidimai `events` lentelei
+4. `supabase/seed.sql` — pavyzdiniai renginiai (pasirenkama)
+5. SQL Editor: `insert into admin_users (email) values ('jusu@elpastas.lt');` — pridėk savo admin el. paštą (mažosios raidės)
+6. Jei reikia papildomų pataisymų: `supabase/fix-seats-count-on-cancel.sql`, `supabase/fix-events-rls.sql` ir kt.
 
 ### Lentelė `events`
 
@@ -106,6 +110,17 @@ Renginių katalogas.
 | `price` | Kaina |
 | `total_seats` | Viso vietų skaičius |
 | `available_seats` | Likusios laisvos vietos |
+| `status` | `active` arba `cancelled` (atšauktas renginys) |
+| `created_at` | Įrašo sukūrimo laikas |
+
+### Lentelė `admin_users`
+
+Administratorių el. paštai (prieiga prie `/admin`).
+
+| Stulpelis | Aprašymas |
+|-----------|-----------|
+| `id` | Įrašo identifikatorius (UUID) |
+| `email` | Admin el. paštas (mažosios raidės, kaip Auth) |
 | `created_at` | Įrašo sukūrimo laikas |
 
 ### Lentelė `reservations`

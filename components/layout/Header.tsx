@@ -8,8 +8,8 @@ import {
   AUTHENTICATED_NAV_LINKS,
   PUBLIC_NAV_LINKS,
 } from "@/lib/constants";
+import { isAdminUser } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/client";
-import { isAdminEmail } from "@/lib/admin";
 import { ThemeToggle } from "./ThemeToggle";
 
 function NavLink({
@@ -45,6 +45,7 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,16 +54,25 @@ export function Header() {
     try {
       const supabase = createClient();
 
+      async function syncAdminStatus(email: string | null | undefined) {
+        const admin = await isAdminUser(supabase, email);
+        setIsAdmin(admin);
+      }
+
       supabase.auth.getUser().then(({ data: { user } }) => {
+        const email = user?.email ?? null;
         setIsLoggedIn(!!user);
-        setUserEmail(user?.email ?? null);
+        setUserEmail(email);
+        void syncAdminStatus(email);
       });
 
       const {
         data: { subscription: authSubscription },
       } = supabase.auth.onAuthStateChange((event, session) => {
+        const email = session?.user?.email ?? null;
         setIsLoggedIn(!!session?.user);
-        setUserEmail(session?.user?.email ?? null);
+        setUserEmail(email);
+        void syncAdminStatus(email);
 
         if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
           router.refresh();
@@ -71,20 +81,15 @@ export function Header() {
 
       subscription = authSubscription;
     } catch {
-      setIsLoggedIn(false);
-      setUserEmail(null);
+      return undefined;
     }
 
     return () => subscription?.unsubscribe();
   }, [router]);
 
-  const isAdmin = isAdminEmail(userEmail);
   const navLinks = isLoggedIn
     ? isAdmin
-      ? [
-          ...AUTHENTICATED_NAV_LINKS,
-          { href: "/admin/events", label: "Renginių valdymas" },
-        ]
+      ? [...AUTHENTICATED_NAV_LINKS, { href: "/admin", label: "Admin" }]
       : AUTHENTICATED_NAV_LINKS
     : PUBLIC_NAV_LINKS;
 

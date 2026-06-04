@@ -2,6 +2,11 @@
 
 import { formatEventDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-price";
+import {
+  EVENT_STATUS_LABELS,
+  isEventCancelled,
+  normalizeEventStatus,
+} from "@/lib/event-status";
 import type { Event } from "@/types";
 import { ReserveButton } from "./ReserveButton";
 
@@ -17,14 +22,23 @@ export function EventCard({
   alreadyReserved,
 }: EventCardProps) {
   const availableSeats = Number(event.available_seats);
+  const status = normalizeEventStatus(event.status);
+  const cancelled = isEventCancelled(status);
 
   return (
     <article className="app-content-card">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 className="text-lg font-semibold">{event.title}</h2>
-        <span className="rounded-lg bg-app-card px-2 py-1 text-xs font-medium text-app-text-muted">
-          {event.category}
-        </span>
+        <div className="flex flex-wrap gap-2">
+          {cancelled && (
+            <span className="rounded-lg bg-red-100 px-2 py-1 text-xs font-medium text-red-800 dark:bg-red-950/50 dark:text-red-200">
+              {EVENT_STATUS_LABELS.cancelled}
+            </span>
+          )}
+          <span className="rounded-lg bg-app-card px-2 py-1 text-xs font-medium text-app-text-muted">
+            {event.category}
+          </span>
+        </div>
       </div>
       {event.description && (
         <p className="mt-2 text-sm text-app-text-muted">{event.description}</p>
@@ -53,6 +67,7 @@ export function EventCard({
         availableSeats={availableSeats}
         isLoggedIn={isLoggedIn}
         alreadyReserved={alreadyReserved}
+        eventCancelled={cancelled}
       />
     </article>
   );

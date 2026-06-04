@@ -5,6 +5,7 @@ import {
 } from "@/lib/supabaseClient";
 import { getSupabaseProjectRef } from "@/lib/supabase-project";
 import { createClient } from "@/lib/supabase/server";
+import { normalizeEventStatus } from "@/lib/event-status";
 import type { Event } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -56,7 +57,10 @@ export default async function EventsPage() {
         .filter(Boolean)
         .join(" · ");
     } else {
-      events = (data ?? []) as Event[];
+      events = ((data ?? []) as Event[]).map((event) => ({
+        ...event,
+        status: normalizeEventStatus(event.status),
+      }));
     }
 
     const supabaseAuth = await createClient();

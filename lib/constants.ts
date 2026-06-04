@@ -1,5 +1,11 @@
 export const THEME_STORAGE_KEY = "theme";
 
+/** Maksimalus renginių skaičius, kurį admin gali sukurti */
+export const MAX_ADMIN_EVENTS = 99;
+
+export const ADMIN_MAX_EVENTS_MESSAGE =
+  "Pasiektas maksimalus renginių skaičius: 99.";
+
 export type Theme = "light" | "dark";
 
 /** Reikia prisijungimo */

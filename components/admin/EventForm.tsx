@@ -1,14 +1,12 @@
 import type { Event } from "@/types";
 
 type EventFormProps = {
-  action: (formData: FormData) => Promise<void>;
-  submitLabel: string;
   event?: Event;
 };
 
-export function EventForm({ action, submitLabel, event }: EventFormProps) {
+export function EventForm({ event }: EventFormProps) {
   return (
-    <form action={action} className="space-y-4">
+    <>
       {event?.id && <input type="hidden" name="eventId" value={event.id} />}
 
       <div>
@@ -26,7 +24,10 @@ export function EventForm({ action, submitLabel, event }: EventFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-app-text" htmlFor="description">
+        <label
+          className="block text-sm font-semibold text-app-text"
+          htmlFor="description"
+        >
           Aprašymas
         </label>
         <textarea
@@ -40,7 +41,10 @@ export function EventForm({ action, submitLabel, event }: EventFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-semibold text-app-text" htmlFor="event_date">
+          <label
+            className="block text-sm font-semibold text-app-text"
+            htmlFor="event_date"
+          >
             Data
           </label>
           <input
@@ -54,7 +58,10 @@ export function EventForm({ action, submitLabel, event }: EventFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-app-text" htmlFor="event_time">
+          <label
+            className="block text-sm font-semibold text-app-text"
+            htmlFor="event_time"
+          >
             Laikas
           </label>
           <input
@@ -114,7 +121,10 @@ export function EventForm({ action, submitLabel, event }: EventFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-app-text" htmlFor="total_seats">
+          <label
+            className="block text-sm font-semibold text-app-text"
+            htmlFor="total_seats"
+          >
             Bendras vietų skaičius
           </label>
           <input
@@ -128,25 +138,6 @@ export function EventForm({ action, submitLabel, event }: EventFormProps) {
           />
         </div>
       </div>
-
-      <div>
-        <label className="block text-sm font-semibold text-app-text" htmlFor="available_seats">
-          Laisvų vietų skaičius
-        </label>
-        <input
-          id="available_seats"
-          name="available_seats"
-          type="number"
-          min="0"
-          required
-          defaultValue={event?.available_seats ?? event?.total_seats ?? 0}
-          className="app-input"
-        />
-      </div>
-
-      <button type="submit" className="app-btn-primary w-full">
-        {submitLabel}
-      </button>
-    </form>
+    </>
   );
 }

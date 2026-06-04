@@ -21,7 +21,7 @@ export default async function DashboardPage() {
   }
 
   const [eventsResult, reservationsResult] = await Promise.all([
-    supabase.from("events").select("category"),
+    supabase.from("events").select("category").eq("status", "active"),
     supabase
       .from("reservations")
       .select("status, seats_count, cancelled_seats")

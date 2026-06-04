@@ -14,7 +14,9 @@ create table if not exists events (
   price numeric default 0,
   total_seats integer not null,
   available_seats integer not null,
-  created_at timestamp with time zone default now()
+  status text not null default 'active',
+  created_at timestamp with time zone default now(),
+  constraint events_status_check check (status in ('active', 'cancelled'))
 );
 
 create table if not exists reservations (

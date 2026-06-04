@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { reserveEvent } from "@/app/actions/reserve-event";
 import { isActionResult } from "@/lib/action-result";
+import { EVENT_CANCELLED_MESSAGE } from "@/lib/event-status";
 import { RESERVATION_MESSAGES } from "@/lib/reservation-messages";
 import {
   getMaxSelectableSeats,
@@ -16,6 +17,7 @@ type ReserveButtonProps = {
   availableSeats: number;
   isLoggedIn: boolean;
   alreadyReserved: boolean;
+  eventCancelled?: boolean;
 };
 
 const btnClass = "app-btn-primary w-full";
@@ -25,6 +27,7 @@ export function ReserveButton({
   availableSeats,
   isLoggedIn,
   alreadyReserved,
+  eventCancelled = false,
 }: ReserveButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -38,13 +41,14 @@ export function ReserveButton({
   const maxSelectable = getMaxSelectableSeats(seats);
   const noSeats = maxSelectable <= 0;
   const isDisabled =
-    isPending || (isLoggedIn && (alreadyReserved || noSeats));
+    isPending ||
+    eventCancelled ||
+    (isLoggedIn && (alreadyReserved || noSeats));
 
-  useEffect(() => {
-    if (seatsCount > maxSelectable && maxSelectable >= MIN_RESERVATION_SEATS) {
-      setSeatsCount(maxSelectable);
-    }
-  }, [maxSelectable, seatsCount]);
+  const seatsCountForSelect =
+    maxSelectable >= MIN_RESERVATION_SEATS && seatsCount > maxSelectable
+      ? maxSelectable
+      : seatsCount;
 
   function handleClick() {
     setFeedback(null);
@@ -58,6 +62,14 @@ export function ReserveButton({
       return;
     }
 
+    if (eventCancelled) {
+      setFeedback({
+        type: "error",
+        text: EVENT_CANCELLED_MESSAGE,
+      });
+      return;
+    }
+
     if (alreadyReserved) {
       setFeedback({
         type: "error",
@@ -66,7 +78,7 @@ export function ReserveButton({
       return;
     }
 
-    const seatsToBook = Math.floor(Number(seatsCount));
+    const seatsToBook = Math.floor(Number(seatsCountForSelect));
 
     if (
       !Number.isFinite(seatsToBook) ||
@@ -123,7 +135,18 @@ export function ReserveButton({
     });
   }
 
-  const showSeatPicker = isLoggedIn && !alreadyReserved && !noSeats;
+  const showSeatPicker =
+    isLoggedIn && !eventCancelled && !alreadyReserved && !noSeats;
+
+  if (eventCancelled) {
+    return (
+      <div className="mt-4 border-t border-app-border pt-4">
+        <p className="text-sm text-app-text-muted" role="status">
+          {EVENT_CANCELLED_MESSAGE}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-4 border-t border-app-border pt-4">
@@ -137,7 +160,7 @@ export function ReserveButton({
           </label>
           <select
             id={`seats-${eventId}`}
-            value={seatsCount}
+            value={seatsCountForSelect}
             onChange={(e) => setSeatsCount(Number(e.target.value))}
             disabled={isPending}
             className="app-input mt-1"

@@ -1,3 +1,5 @@
+import type { EventStatus } from "@/lib/event-status";
+
 export type ReservationStatus = "active" | "cancelled";
 
 export type Event = {
@@ -11,6 +13,7 @@ export type Event = {
   price: number;
   total_seats: number;
   available_seats: number;
+  status: EventStatus;
   created_at: string;
 };
 

@@ -72,7 +72,7 @@ export async function reserveEvent(
 
     const { data: event, error: eventError } = await supabase
       .from("events")
-      .select("id, available_seats")
+      .select("id, available_seats, status")
       .eq("id", parsedEventId)
       .single();
 
@@ -83,6 +83,10 @@ export async function reserveEvent(
           eventError?.code,
         ),
       );
+    }
+
+    if (event.status === "cancelled") {
+      return actionError(RESERVATION_MESSAGES.eventCancelled);
     }
 
     const availableSeats = parseAvailableSeats(event.available_seats);
