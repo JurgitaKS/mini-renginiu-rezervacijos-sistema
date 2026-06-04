@@ -87,7 +87,7 @@ export function Header() {
           className="min-w-0 text-sm font-semibold leading-tight text-app-text sm:text-base"
         >
           <span className="hidden sm:inline">
-            Mini renginių rezervacijos sistema
+            Renginių rezervacija
           </span>
           <span className="sm:hidden">Mini renginiai</span>
         </Link>

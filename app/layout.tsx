@@ -4,7 +4,7 @@ import { THEME_STORAGE_KEY } from "@/lib/constants";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Mini renginių rezervacijos sistema",
+  title: "Renginių rezervacija",
   description: "Mokymosi projektas — renginių rezervavimas",
 };
 
