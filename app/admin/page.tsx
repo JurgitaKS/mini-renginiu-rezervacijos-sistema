@@ -75,7 +75,7 @@ export default async function AdminPage() {
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-app-text">Visi renginiai</h2>
 
-          <AdminEventList events={currentEvents} />
+          <AdminEventList events={currentEvents} isAdmin={isAdmin} />
         </div>
 
         <div className="app-card h-fit">
@@ -87,7 +87,7 @@ export default async function AdminPage() {
                 skaičiui.
               </p>
               <div className="mt-4">
-                <AdminEventForm action={createEvent} submitLabel="Pridėti renginį" />
+                <AdminEventForm action={createEvent} submitLabel="Pridėti renginį" isAdmin={isAdmin} />
               </div>
             </>
           ) : (

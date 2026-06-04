@@ -21,6 +21,7 @@ import { AdminEventForm } from "./AdminEventForm";
 
 type AdminEventListProps = {
   events: Event[];
+  isAdmin?: boolean;
 };
 
 export function AdminEventList({ events }: AdminEventListProps) {
@@ -183,6 +184,7 @@ export function AdminEventList({ events }: AdminEventListProps) {
                   submitLabel="Išsaugoti pakeitimus"
                   onSuccess={() => setEditingEventId(null)}
                   onCancel={() => setEditingEventId(null)}
+                  isAdmin={true}
                 />
               </div>
             )}

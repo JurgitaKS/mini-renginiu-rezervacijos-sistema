@@ -15,6 +15,7 @@ type AdminEventFormProps = {
   event?: Event;
   onSuccess?: () => void;
   onCancel?: () => void;
+  isAdmin?: boolean;
 };
 
 export function AdminEventForm({
@@ -23,6 +24,7 @@ export function AdminEventForm({
   event,
   onSuccess,
   onCancel,
+  isAdmin,
 }: AdminEventFormProps) {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(action, null);
@@ -36,7 +38,7 @@ export function AdminEventForm({
 
   return (
     <form action={formAction} className="space-y-4">
-      <EventForm event={event} />
+      <EventForm event={event} isAdmin={isAdmin} />
 
       <div className="flex flex-wrap gap-2">
         <button type="submit" disabled={isPending} className="app-btn-primary">
