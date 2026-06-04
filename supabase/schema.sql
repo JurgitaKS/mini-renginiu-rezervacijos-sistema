@@ -58,6 +58,21 @@ create policy "events_update_authenticated"
   using (true)
   with check (available_seats >= 0);
 
+-- Leisti renginių priežiūrą prisijungusiems vartotojams
+create policy "events_insert_authenticated"
+  on events for insert
+  to authenticated
+  with check (
+    total_seats >= 1
+    and available_seats >= 0
+    and available_seats <= total_seats
+  );
+
+create policy "events_delete_authenticated"
+  on events for delete
+  to authenticated
+  using (true);
+
 -- Rezervacijas: vartotojas mato ir kuria tik savo
 create policy "reservations_select_own"
   on reservations for select

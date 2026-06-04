@@ -9,6 +9,7 @@ import {
   PUBLIC_NAV_LINKS,
 } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
+import { isAdminEmail } from "@/lib/admin";
 import { ThemeToggle } from "./ThemeToggle";
 
 function NavLink({
@@ -77,7 +78,15 @@ export function Header() {
     return () => subscription?.unsubscribe();
   }, [router]);
 
-  const navLinks = isLoggedIn ? AUTHENTICATED_NAV_LINKS : PUBLIC_NAV_LINKS;
+  const isAdmin = isAdminEmail(userEmail);
+  const navLinks = isLoggedIn
+    ? isAdmin
+      ? [
+          ...AUTHENTICATED_NAV_LINKS,
+          { href: "/admin/events", label: "Renginių valdymas" },
+        ]
+      : AUTHENTICATED_NAV_LINKS
+    : PUBLIC_NAV_LINKS;
 
   return (
     <header className="sticky top-0 z-50 border-b border-app-border bg-app-surface/95 backdrop-blur">
