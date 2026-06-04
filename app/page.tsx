@@ -1,21 +1,31 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
 const features = [
   {
     title: "Renginių peržiūra",
     description: "Naršykite visus artėjančius renginius ir jų detales.",
+    href: "/events",
   },
   {
     title: "Vietų rezervacija",
     description: "Užsitikrinkite vietą keliais paspaudimais.",
+    href: "/events",
   },
   {
     title: "Rezervacijų valdymas",
     description: "Peržiūrėkite ir valdykite savo rezervacijas vienoje vietoje.",
+    href: "/my-reservations",
   },
 ] as const;
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const isLoggedIn = Boolean(session?.user);
+
   return (
     <div className="mx-auto w-full max-w-3xl">
       <section className="app-card px-6 py-10 text-center sm:px-10 sm:py-14">
@@ -37,26 +47,28 @@ export default function Home() {
             Peržiūrėti renginius
           </Link>
           <Link
-            href="/register"
+            href={isLoggedIn ? "/dashboard" : "/register"}
             className="app-btn-secondary inline-flex items-center justify-center px-6 py-3 text-base"
           >
-            Registruotis
+            {isLoggedIn ? "Statistika" : "Registruotis"}
           </Link>
         </div>
       </section>
 
       <ul className="mt-6 grid gap-4 sm:grid-cols-3">
         {features.map((feature) => (
-          <li
-            key={feature.title}
-            className="app-content-card text-center sm:text-left"
-          >
-            <h2 className="text-base font-semibold text-app-text">
-              {feature.title}
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-app-text-muted">
-              {feature.description}
-            </p>
+          <li key={feature.title}>
+            <Link
+              href={feature.href}
+              className="app-content-card block h-full rounded-xl p-6 text-center transition hover:-translate-y-0.5 hover:shadow-lg sm:text-left"
+            >
+              <h2 className="text-base font-semibold text-app-text">
+                {feature.title}
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-app-text-muted">
+                {feature.description}
+              </p>
+            </Link>
           </li>
         ))}
       </ul>
